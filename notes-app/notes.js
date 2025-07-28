@@ -20,7 +20,7 @@ const addNote = function (title, body) {
         })
         saveNotes(notes)
         console.log("New Note Added")
-    }else{
+    } else {
         console.log("Note Title Taken")
     }
 
@@ -41,7 +41,42 @@ const loadNote = function () {
     }
 }
 
+
+const removeNote = function (title) {
+    console.log("loading Notes to remove the note")
+    const notes = loadNote()
+    
+    // 1st Method
+    const notesToKeep = notes.filter(function(note){
+        return note.title !== title
+    })
+    
+    console.log(JSON.stringify(notesToKeep))
+
+    saveNotes(notesToKeep)
+    // 2nd Method
+    // const duplicateNotes = notes.filter(function (note) {
+    //     return note.title === title
+    // })
+
+
+    // if (duplicateNotes.length !== 0) {
+    //     console.log("Note Found")
+    //     const index = notes.findIndex(function (note) {
+    //         console.log("note " + (JSON.stringify(note)))
+    //         return note.title === title;
+    //     });
+    //     console.log(index)
+    //     notes.splice(index, 1)
+    //     saveNotes(notes)
+    // } else {
+    //     console.log("Note does not exist")
+    // }
+
+}
+
 module.exports = {
     getNotes: getNotes,
-    addNote: addNote
+    addNote: addNote,
+    removeNote: removeNote
 }
