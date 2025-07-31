@@ -1,16 +1,16 @@
 const { default: chalk } = require("chalk");
 const fs = require("fs");
 
-const getNotes = () => {
-  return "Your notes...";
-};
 
 const addNote = (title, body) => {
   const notes = loadNote();
 
-  const duplicateNotes = notes.filter((note) => note.title === title);
+  // const duplicateNotes = notes.filter((note) => note.title === title);
+  
+  // search till it find the note
+  const duplicateNote = notes.find((note) => note.title === title)
 
-  if (duplicateNotes.length === 0) {
+  if (!duplicateNote) {
     notes.push({
       title: title,
       body: body,
@@ -43,6 +43,7 @@ const removeNote = (title) => {
 
   // Arrow
   const notesToKeep = notes.filter((note) => note.title !== title);
+
   // // 1st Method
   // const notesToKeep = notes.filter(function (note) {
   //     return note.title !== title
@@ -77,13 +78,26 @@ const removeNote = (title) => {
 
 
 const listNotes = () => {
-    console.log(chalk.bold.cyan("Your Notes"))
-    const notes = loadNote();
-    
-    notes.forEach((note) => {
-        console.log(note.title)
-    });
+  console.log(chalk.bold.cyan("Your Notes"))
+  const notes = loadNote();
 
+  notes.forEach((note) => {
+    console.log(note.title)
+  });
+
+}
+
+const readNote = (title) => {
+  const notes = loadNote()
+  const Note = notes.find((note) => note.title === title)
+
+  if(Note){
+    console.log("Title : " + Note.title)
+    console.log("Body : " + Note.body)
+
+  }else{
+    console.log(chalk.bold.red("Note does not exit!"))
+  }
 }
 
 
@@ -93,4 +107,5 @@ module.exports = {
   addNote: addNote,
   removeNote: removeNote,
   listNotes: listNotes,
+  readNote: readNote
 };
