@@ -47,10 +47,10 @@ yargs.command({
 
 //list command
 yargs.command({
-    command: "list",
+    command: "ls",
     describe: "List all notes",
     handler() {
-        console.log("Listing all notes");
+        notes.listNotes()
     },
 });
 
@@ -64,6 +64,7 @@ yargs.command({
 });
 
 // add note, remove note, list notes, read note
+
 
 yargs.parse()
 // console.log(yargs.argv);
