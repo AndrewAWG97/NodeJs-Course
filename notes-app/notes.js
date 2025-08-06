@@ -10,6 +10,11 @@ const addNote = (title, body) => {
   // search till it find the note
   const duplicateNote = notes.find((note) => note.title === title)
 
+  // console.log(duplicateNote);
+  // console.log(title)
+
+  // debugger
+
   if (!duplicateNote) {
     notes.push({
       title: title,
@@ -103,7 +108,7 @@ const readNote = (title) => {
 
 
 module.exports = {
-  getNotes: getNotes,
+  // getNotes: getNotes,
   addNote: addNote,
   removeNote: removeNote,
   listNotes: listNotes,
