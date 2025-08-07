@@ -1,14 +1,42 @@
-const request = require("request")
+const request = require("request");
 
-const key = "e922684c4c784f36895140459250608"
-const city = "cairo"
+const location = "Cairo"; 
+const LocationKey = "YOUR_API_KEY";
+const weatherKey = "YOUR_API_KEY";
 
-const url = `http://api.weatherapi.com/v1/current.json?key=${key}&q=${city}&aqi=no`
-request({url: url, json: true}, (error, reponse)=>{
-    // const data = JSON.parse(reponse.body)
-    // console.log(data.location.name)
-    // console.log(data.current.temp_c)
-    // console.log(reponse.body.current)
-    console.log("It's currently "+ reponse.body.current.temp_c + "°C")
-})
+const getCoordinates = `https://us1.locationiq.com/v1/search?key=${LocationKey}&q=${encodeURIComponent(
+    location
+)}&format=json&limit=1`;
 
+let lat;
+let lon;
+
+request({ url: getCoordinates, json: true }, (error, response) => {
+    if (error) {
+        console.log("Unable to connect to server");
+    } else if (response.body.error) {
+        console.log(response.body.error);
+        return console.log("Unable to connect to geocoding service.");
+    } else {
+        lat = response.body[0].lat;
+        lon = response.body[0].lon;
+        const getWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${weatherKey}&units=metric`;
+
+        request({ url: getWeather, json: true }, (error, reponse) => {
+            if (error) {
+                console.log(error);
+                console.log("Unable to connect to server");
+            } else {
+                if (!(response.body.cod != 200)) {
+                    console.log("here")
+                    console.log(reponse.body);
+                } else {
+                    console.log(reponse.body);
+                    console.log(
+                        `It's currently ${reponse.body.main.temp}°C in ${location}`
+                    );
+                }
+            }
+        });
+    }
+});
