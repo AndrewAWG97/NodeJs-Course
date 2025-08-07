@@ -1,8 +1,8 @@
 const request = require("request");
 
-const location = "Cairo"; 
-const LocationKey = "YOUR_API_KEY";
-const weatherKey = "YOUR_API_KEY";
+const location = "Karim Merhom egypt"; 
+const LocationKey = "pk.07aa2bd8eae426c543e2e452aa3f7557";
+const weatherKey = "dba6b0810bc0f2e435a1da229cd57af9";
 
 const getCoordinates = `https://us1.locationiq.com/v1/search?key=${LocationKey}&q=${encodeURIComponent(
     location
