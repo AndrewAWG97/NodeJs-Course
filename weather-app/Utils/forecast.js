@@ -1,6 +1,6 @@
 const request = require("request");
 
-const weatherKey = "dba6b0810bc0f2e435a1da229cd57af9";
+const weatherKey = "";
 
 const forecast = (lat, lon, callback) =>{
     const getWeather = `https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&appid=${weatherKey}&units=metric`;

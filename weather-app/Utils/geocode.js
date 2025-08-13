@@ -1,6 +1,6 @@
 request = require('request')
 
-const LocationKey = "pk.07aa2bd8eae426c543e2e452aa3f7557";
+const LocationKey = "pk.";
 
 const geocode = (address, callback) => {
     const url = `https://us1.locationiq.com/v1/search?key=${LocationKey}&q=${encodeURIComponent(address)}&format=json&limit=1
