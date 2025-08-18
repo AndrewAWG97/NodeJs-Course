@@ -1,3 +1,6 @@
 /notes-app/node_modules
 notes-app/package-lock.json
 /weather-app/node_modules
+web-server/node_modules/.bin/mime
+/web-server/node_modules
+web-server/package-lock.json
