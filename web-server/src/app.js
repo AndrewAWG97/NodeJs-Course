@@ -5,10 +5,14 @@ console.log(__dirname)
 console.log(__filename)
 
 const publicDirectoryPath = path.join(__dirname, '../public')
+const viewsPath = path.join(__dirname, '../templates')
 const app = express()
 
 app.set('view engine', 'hbs')
+app.set('views', viewsPath)
+
 app.use(express.static(publicDirectoryPath))
+
 
 app.get('/about', (req, res) => {
     res.render('about', {
