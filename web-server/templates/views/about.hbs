@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <!-- Link external CSS file from /public/css/styles.css -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    {{>header}}
+    <!-- Render dynamic title from Handlebars context (e.g., "Weather App") -->
+
+    <!-- Display an image stored in /public/img/me.jpg -->
+    <img src="/img/me.jpg" />
+
+    <!-- Render dynamic name from Handlebars context (e.g., "Andrew") -->
+    {{!-- <p>Created by {{name}}</p> --}}
+    {{>footer}}
+
+  </body>
+</html>

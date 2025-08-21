@@ -1,44 +1,84 @@
-const express = require('express')
-const path = require('path')
+// Load core and external modules
+const express = require('express')    // Import Express framework
+const path = require('path')          // Import Node.js path module for handling file paths
+const hbs = require('hbs')
 
-console.log(__dirname)
-console.log(__filename)
+// Debugging: log current directory and file name
+// console.log(__dirname)   // The absolute path of the current directory (where this file is located)
+// console.log(__filename)  // The absolute path of this file (app.js)
 
-const publicDirectoryPath = path.join(__dirname, '../public')
-const viewsPath = path.join(__dirname, '../templates')
+// Define paths for Express configuration
+const publicDirectoryPath = path.join(__dirname, '../public')   // Path to serve static files (HTML, CSS, JS, images)
+const viewsPath = path.join(__dirname, '../templates/views')          // Path where Handlebars (.hbs) view templates are stored
+const partialPath = path.join(__dirname, '../templates/partials')
+
+
+// Initialize Express application
 const app = express()
 
+// Set Handlebars as the view engine
 app.set('view engine', 'hbs')
+
+// Tell Express to look for views (templates) in the "templates" folder instead of default "views"
 app.set('views', viewsPath)
 
+hbs.registerPartials(partialPath)
+
+// Setup static directory to serve (for static files like HTML, CSS, JS, images in /public)
 app.use(express.static(publicDirectoryPath))
 
+// ------------------- Routes -------------------
 
+// Render "about.hbs" when user visits /about
 app.get('/about', (req, res) => {
     res.render('about', {
-        title: 'About',
-        name: 'Andrew'
-    })
-})
-app.get('/help', (req, res) => {
-    res.render('help', {
-        title: 'help',
-        name: 'Andrew'
+        title: 'About me',
+        name: 'Andrew Ashraf'
     })
 })
 
+// Render "help.hbs" when user visits /help
+app.get('/help', (req, res) => {
+    res.render('help', {
+        helpText: 'This is some helpful text',
+        title: 'Help',
+        name: 'Andrew Ashraf'
+    })
+})
+
+// Render "index.hbs" when user visits /
 app.get('/', (req, res) => {
     res.render('index', {
         title: 'Weather App',
+        name: 'Andrew Ashraf'
+    })
+})
+
+app.get('/weather', (req, res) => {
+    res.send({
+        forcast: 'It is sunny',
+        location: 'Cairo'
+    })
+})
+
+app.get('/help/*', (req, res) => {
+    res.render('404', {
+        title: 'Help : Article not found',
+        errorMsg: 'Error 404',
         name: 'Andrew'
     })
 })
 
-
-//Start Server
-app.listen(3000, () => {
-    console.log('Server is up on port 3000')
+app.get('*', (req, res) => {
+    res.render('404', {
+        title: 'Page not Found',
+        errorMsg: 'Error 404',
+        name: 'Andrew Ashraf'
+    })
 })
 
 
-
+// ------------------- Start the server -------------------
+app.listen(3000, () => {
+    console.log('Server is up on port 3000')
+})
