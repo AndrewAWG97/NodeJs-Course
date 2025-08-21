@@ -1,7 +1,5 @@
-h1 {
-    color: gray;
-}
-
-img{
-    width: 250px;
+body {
+    color: #333333;
+    font-family: arial;
+    max-width: 650px;
 }
