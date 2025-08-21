@@ -49,7 +49,7 @@ app.get('/help', (req, res) => {
 // Render "index.hbs" when user visits /
 app.get('/', (req, res) => {
     res.render('index', {
-        title: 'Weather App',
+        title: 'Weather',
         name: 'Andrew Ashraf'
     })
 })
@@ -64,7 +64,7 @@ app.get('/weather', (req, res) => {
 app.get('/help/*', (req, res) => {
     res.render('404', {
         title: 'Help : Article not found',
-        errorMsg: 'Error 404',
+        errorMsg: 'Page not found!',
         name: 'Andrew'
     })
 })
@@ -72,7 +72,7 @@ app.get('/help/*', (req, res) => {
 app.get('*', (req, res) => {
     res.render('404', {
         title: 'Page not Found',
-        errorMsg: 'Error 404',
+        errorMsg: 'Page not found!',
         name: 'Andrew Ashraf'
     })
 })
