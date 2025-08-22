@@ -19,8 +19,13 @@
             <button>Search</button>
         </form>
 
-        <p id="message-1"></p>
-        <p id="message-2"></p>
+        <div id="weather-result" class="weather-card hidden">
+            <h2 id="location"></h2>
+            <p id="temperature"></p>
+            <p id="description"></p>
+            <img id="weather-icon" alt="Weather Icon" />
+        </div>
+
     </div>
 
     {{>footer}}
