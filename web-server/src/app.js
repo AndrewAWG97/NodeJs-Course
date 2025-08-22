@@ -2,6 +2,7 @@
 const express = require('express')    // Import Express framework
 const path = require('path')          // Import Node.js path module for handling file paths
 const hbs = require('hbs')
+const { error } = require('console')
 
 // Debugging: log current directory and file name
 // console.log(__dirname)   // The absolute path of the current directory (where this file is located)
@@ -55,9 +56,29 @@ app.get('/', (req, res) => {
 })
 
 app.get('/weather', (req, res) => {
+    if(!req.query.address){
+        return res.send({
+            error: 'Please provide an address'
+        })
+    }
     res.send({
+        address : req.query.address,
         forcast: 'It is sunny',
         location: 'Cairo'
+    })
+})
+
+app.get('/products', (req, res) => {
+    if (!req.query.search) {
+        return res.send({
+            error:  'You must provide a search'
+        })
+    }
+    console.log(req.query)
+    // res.send   (req.query)
+    
+    res.send({
+        products: []
     })
 })
 
