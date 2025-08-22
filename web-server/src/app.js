@@ -2,7 +2,10 @@
 const express = require('express')    // Import Express framework
 const path = require('path')          // Import Node.js path module for handling file paths
 const hbs = require('hbs')
-const { error } = require('console')
+
+const geocode = require('./Utils/geocode')
+const forecast = require('./Utils/forecast')
+
 
 // Debugging: log current directory and file name
 // console.log(__dirname)   // The absolute path of the current directory (where this file is located)
@@ -56,27 +59,42 @@ app.get('/', (req, res) => {
 })
 
 app.get('/weather', (req, res) => {
-    if(!req.query.address){
+    if (!req.query.address) {
         return res.send({
             error: 'Please provide an address'
         })
     }
-    res.send({
-        address : req.query.address,
-        forcast: 'It is sunny',
-        location: 'Cairo'
+    geocode(req.query.address, (error, { latitude, longitude, location } = {}) => {
+        if (error) {
+            return res.send({
+                error: error
+            })
+        }
+
+        forecast(latitude, longitude, (error, forecastData) => {
+            if (error) {
+                return res.send({
+                    error: error
+                })
+            }
+            console.log(location)
+            console.log(forecastData)
+            res.send({
+                location: location,
+                forecastData: forecastData
+            })
+        })
     })
 })
 
 app.get('/products', (req, res) => {
     if (!req.query.search) {
         return res.send({
-            error:  'You must provide a search'
+            error: 'You must provide a search'
         })
     }
     console.log(req.query)
-    // res.send   (req.query)
-    
+
     res.send({
         products: []
     })
