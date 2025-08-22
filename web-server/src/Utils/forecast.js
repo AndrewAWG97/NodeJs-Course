@@ -11,9 +11,15 @@ const forecast = (lat, lon, callback) => {
         if (body.cod !== 200) {
             callback("Server internal error", undefined);
         } else {
-            const { temp: temperature } = body.main;
+            const {
+                main: { temp: temperature },
+                weather
+            } = body;
+
             callback(undefined, {
                 temperature,
+                weatherMain: weather[0].main,
+                weatherDescription: weather[0].description
             });
         }
     });
