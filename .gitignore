@@ -4,3 +4,6 @@ notes-app/package-lock.json
 web-server/node_modules/.bin/mime
 /web-server/node_modules
 web-server/package-lock.json
+
+# Local Netlify folder
+.netlify
