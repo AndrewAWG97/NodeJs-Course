@@ -1,8 +1,0 @@
-services:
-  - type: web
-    name: web-server
-    env: node
-    rootDir: web-server
-    buildCommand: npm install
-    startCommand: npm start
-    plan: free
