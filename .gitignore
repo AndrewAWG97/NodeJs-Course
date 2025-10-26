@@ -8,3 +8,4 @@ web-server/package-lock.json
 # Local Netlify folder
 .netlify
 /task-manager/node_modules
+/node_modules

@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "queclink-parser": "^1.9.17"
+  }
+}

@@ -1,37 +1,15 @@
-// setTimeout(() => {
-//     console.log("2 seconds passed")
-// }, 2000)
+const { getUnpackedSettings } = require("http2")
 
-
-// const names = ["Andrew", "Jen", "Jess"]
-
-// const shortNames = names.filter((name) => {
-//     return name.length <= 4
-// })
-
-// const geocode = (address, callback) => {
-//     setTimeout(() => {
-//         const data = {
-//             lat: 30.454,
-//             lon: 31.154,
-//         }
-//         callback(data)
-//     }, 2000)
-// }
-
-// data = geocode("Cairo", (king) => {
-//     console.log(king)
-// })
-
-
-const add = (a, b, callback) => {
+const doWorkCallback = (callback) => {
     setTimeout(() => {
-        
-        callback(a + b)
+        // callback('This is my error!', undefined)
+        callback(undefined, [1, 4, 7])
     }, 2000)
 }
 
-
-add(5, 4, (sum) => {
-    console.log(sum) // Should print: 9
+doWorkCallback((error, results) => {
+    if(error){
+        return console.log(error)
+    }
+    console.log(results)
 })
