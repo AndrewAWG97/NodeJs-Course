@@ -8,7 +8,13 @@ const userSchema = new mongoose.Schema({
     name: {
         type: String,
         required: true,
-        trim: true
+        trim: true,
+        validate(value) {
+            //Validate if name contains only letters and spaces
+            if(validator.isAlpha(value.replace(/ /g, '')) === false){
+                throw new Error('Name must contain only letters and spaces')
+            }
+        }
     },
     age: {
         type: Number,
