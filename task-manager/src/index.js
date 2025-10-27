@@ -11,11 +11,13 @@ require('./db/mongoose') // Ensure database connection is established
 const User = require('./models/user')
 const Task = require('./models/task')
 const UserRouter = require('./routers/user')
+const TaskRouter = require('./routers/task')
 
 // Middleware to parse JSON bodies
 app.use(express.json())
 
 app.use(UserRouter)
+app.use(TaskRouter)
 
 
 
