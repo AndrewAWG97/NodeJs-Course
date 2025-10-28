@@ -1,4 +1,7 @@
+// user.js
+
 const express = require('express')
+
 const User = require('../models/user')
 const router = new express.Router()
 
@@ -6,6 +9,8 @@ const router = new express.Router()
 // ====== USER ROUTES ======
 
 // Post endpoint to create a new user
+// We need to use async/await here because we are dealing with a database operation
+
 router.post('/users', async (req, res) => {
     const user = new User(req.body)
     await user.save()
@@ -58,9 +63,20 @@ router.patch('/users/:id', async (req, res) => {
     //runValidators to run schema validators on update
     // Proceed with the update
     try {
-        const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
-        if (!updatedUser) return res.status(404).send()
-        res.send(updatedUser)
+        // Make sure to go for middleware and validators
+        const user = await User.findById(req.params.id)
+        updates.forEach((update) => {
+            user[update] = req.body[update] // Dynamically update fields
+        })
+        await user.save()
+        
+        if(!user) return res.status(404).send()
+        res.send(user)
+
+        // Alternative way (but won't run middleware and validators)
+        // const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
+        // if (!updatedUser) return res.status(404).send()
+        // res.send(updatedUser)
     } catch (err) {
         res.status(400).send(err)
     }
