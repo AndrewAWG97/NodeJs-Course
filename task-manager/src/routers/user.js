@@ -10,17 +10,29 @@ const router = new express.Router()
 
 // Post endpoint to create a new user
 // We need to use async/await here because we are dealing with a database operation
-
 router.post('/users', async (req, res) => {
+  try {
     const user = new User(req.body)
     await user.save()
-    try {
-        res.status(201).send(user)
-    } catch (err) {
-        res.status(400).send(err)
+    res.status(201).send(user)
+  } catch (err) {
+    if (err.code === 11000) {
+      return res.status(400).send({ error: 'User already exists with this email' })
     }
+    res.status(400).send({ error: err.message })
+  }
 })
 
+
+// Post endpoint for user login
+router.post('/users/login', async (req, res) => {
+    try {
+        const user = await User.findByCredentials(req.body.email, req.body.password)
+        res.send(user)
+    } catch (err) {
+        res.status(400).send(err.message)
+    }
+})
 
 
 // Get endpoint to get all users
@@ -32,6 +44,8 @@ router.get('/users', async (req, res) => {
         res.status(500).send(err)
     }
 })
+
+
 
 // Get endpoint to get user by ID
 
@@ -54,7 +68,7 @@ router.patch('/users/:id', async (req, res) => {
     const allowedUpdates = ['name', 'email', 'age', 'password']
     // Check if all updates are valid
     // every method returns true if all elements pass the test
-    
+
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
     if (!isValidOperation) {
         return res.status(400).send({ error: 'Invalid updates!' })
@@ -69,8 +83,8 @@ router.patch('/users/:id', async (req, res) => {
             user[update] = req.body[update] // Dynamically update fields
         })
         await user.save()
-        
-        if(!user) return res.status(404).send()
+
+        if (!user) return res.status(404).send()
         res.send(user)
 
         // Alternative way (but won't run middleware and validators)
@@ -91,9 +105,10 @@ router.delete('/users/:id', async (req, res) => {
         if (!deletedUser) return res.status(404).send()
         res.send(deletedUser)
     } catch (err) {
-        res.status(500).send
+        res.status(500).send()
     }
 })
+
 
 
 module.exports = router
