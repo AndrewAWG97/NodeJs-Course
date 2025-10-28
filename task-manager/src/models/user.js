@@ -2,6 +2,8 @@
 const mongoose = require('mongoose')
 const validator = require('validator')
 const bcrypt = require('bcryptjs')
+const jwt = require('jsonwebtoken')
+
 
 
 
@@ -45,8 +47,25 @@ const userSchema = new mongoose.Schema({
                 throw new Error("Cannot include the word password")
             }
         }
-    }
+    },
+    tokens: [{
+        token: {
+            type: String,
+            required: true
+        }
+    }]
 })
+
+//method to generate auth token
+userSchema.methods.generateAuthToken = async function () {
+    const user = this
+    const token = jwt.sign({ _id: user._id.toString() }, 'thismynewcourse', { expiresIn: '1 hours' })
+
+    user.tokens = user.tokens.concat({ token })
+    await user.save()
+    return token
+}
+
 
 // Static method to find user by credentials
 userSchema.statics.findByCredentials = async function (email, password) {
@@ -69,7 +88,6 @@ userSchema.pre('save', async function (next) {
     if (user.isModified('password')) {
         user.password = await bcrypt.hash(user.password, 8)
     }
-    console.log('Just before saving!')
     // if we didn't call next we will be stuck here forever
     next()
 })
