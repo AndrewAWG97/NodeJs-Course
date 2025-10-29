@@ -56,6 +56,15 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
+//method to get public profile (hide private data)
+userSchema.methods.toJSON = function () { // this method is called automatically when res.send is called
+    const user = this
+    const userObject = user.toObject() // Convert Mongoose document to plain JavaScript object
+    delete userObject.password
+    delete userObject.tokens
+    return userObject
+}
+
 //method to generate auth token
 userSchema.methods.generateAuthToken = async function () {
     const user = this
@@ -65,7 +74,6 @@ userSchema.methods.generateAuthToken = async function () {
     await user.save()
     return token
 }
-
 
 // Static method to find user by credentials
 userSchema.statics.findByCredentials = async function (email, password) {

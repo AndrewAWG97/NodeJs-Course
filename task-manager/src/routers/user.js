@@ -14,8 +14,8 @@ router.post('/users', async (req, res) => {
     try {
         const user = new User(req.body)
         await user.save()
-        await user.generateAuthToken()
-        res.status(201).send(user)
+        const token = await user.generateAuthToken()
+        res.status(201).send({ user, token })
     } catch (err) {
         if (err.code === 11000) {
             return res.status(400).send({ error: 'User already exists with this email' })
@@ -30,7 +30,7 @@ router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
-        res.status(201).send(user)
+        res.status(201).send({ user, token })
     } catch (err) {
         res.status(400).send(err.message)
     }
@@ -62,7 +62,7 @@ router.post('/users/logoutAll', auth, async (req, res) => {
 
 // now Request -> Middleware (auth) -> Route Handler
 // Get endpoint to get profile of logged in user
-router.get('/users/me', auth ,async (req, res) =>{
+router.get('/users/me', auth, async (req, res) => {
     // User is already authenticated and user data is attached to req.user by auth middleware
     res.send(req.user)
 })

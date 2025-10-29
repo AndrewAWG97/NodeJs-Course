@@ -30,33 +30,13 @@ app.listen(port, () => {
     console.log(`🚀 Server is up on port ${port}`)
 })
 
+const pet = {
+    name: 'Hal'
+}
+pet.toJSON = function () {
+    console.log(this)
+    return this
+}
 
-
-
-
-// const jwt = require('jsonwebtoken')
-
-// const myFunction = async () => {
-//   const token = jwt.sign(
-//     { _id: 'abc123' },
-//     'thismynewcourse',
-//     { expiresIn: '1 minutes' }
-//   )
-
-//   console.log('Token:', token)
-
-//   jwt.verify(token, 'thismynewcourse', (err, decoded) => {
-//     if (err) {
-//       console.log('Error verifying token:', err)
-//     } else {
-//       console.log('Decoded payload:', decoded)
-
-//       const expiryDate = new Date(decoded.exp * 1000)
-//       console.log('Token expires at:', expiryDate.toLocaleString())
-//     }
-//   })
-// }
-
-
-// myFunction()
-
+console.log(JSON.stringify(pet))
+// console.log(pet) // Express calls toJSON automatically when sending response
