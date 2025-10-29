@@ -14,11 +14,11 @@ const TaskRouter = require('./routers/task')
 // Middleware to parse JSON bodies
 app.use(express.json())
 
-app.use((req, res, next) => {
-    if (req.method) {
-        res. status(503).send('Site is under maintenance')
-    }    
-}) 
+// app.use((req, res, next) => {
+//     if (req.method) {
+//         res. status(503).send('Site is under maintenance')
+//     }    
+// }) 
 
 
 // Use imported routers

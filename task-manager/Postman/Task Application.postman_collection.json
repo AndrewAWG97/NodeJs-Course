@@ -1,0 +1,395 @@
+{
+	"info": {
+		"_postman_id": "5b2a4bef-05f4-43c5-85ac-cf98dafbc4af",
+		"name": "Task Application",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "49571949",
+		"_collection_link": "https://andrewashrafwg97-3828534.postman.co/workspace/Andrew-Ashraf's-Workspace~7161f320-4d16-448c-8cbc-58c4116349e1/collection/49571949-5b2a4bef-05f4-43c5-85ac-cf98dafbc4af?action=share&source=collection_link&creator=49571949"
+	},
+	"item": [
+		{
+			"name": "Create User",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 201 || pm.response.code === 200) {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    if (jsonData.tokens && jsonData.tokens.length > 0) {\r",
+							"        // ✅ Always get the FIRST token\r",
+							"        const firstToken = jsonData.tokens[0].token;\r",
+							"        pm.environment.set(\"authToken\", firstToken);\r",
+							"        console.log(\"✅ First token saved to environment:\", firstToken);\r",
+							"    } else {\r",
+							"        console.warn(\"⚠️ No tokens found in response\");\r",
+							"        console.log(\"Response:\", jsonData);\r",
+							"    }\r",
+							"} else {\r",
+							"    console.warn(\"⚠️ Response not 200/201:\", pm.response.code);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"And Ashraf\",\r\n    \"email\": \"And@example.com\",\r\n    \"password\": \"And@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Task",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"description\":\"Find my iPhone asdasda\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/tasks/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code === 201 || pm.response.code === 200) {\r",
+							"    const jsonData = pm.response.json();\r",
+							"\r",
+							"    if (jsonData.tokens && jsonData.tokens.length > 0) {\r",
+							"        // ✅ Always get the FIRST token\r",
+							"        const firstToken = jsonData.tokens[0].token;\r",
+							"        pm.environment.set(\"authToken\", firstToken);\r",
+							"        console.log(\"✅ First token saved to environment:\", firstToken);\r",
+							"    } else {\r",
+							"        console.warn(\"⚠️ No tokens found in response\");\r",
+							"        console.log(\"Response:\", jsonData);\r",
+							"    }\r",
+							"} else {\r",
+							"    console.warn(\"⚠️ Response not 200/201:\", pm.response.code);\r",
+							"}\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {},
+						"requests": {}
+					}
+				}
+			],
+			"request": {
+				"auth": {
+					"type": "noauth"
+				},
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"And@example.com\",\r\n    \"password\": \"And@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/users/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "User Logout",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\": \"Andrew@example.com\",\r\n    \"password\": \"Andrew@123\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/users/logout",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users",
+						"logout"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read Profile",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": ""
+				},
+				"url": {
+					"raw": "{{url}}/users/me",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users",
+						"me"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read Users by ID",
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\":\"Nouni\",\r\n    \"email\": \"nouni@exmaple.com\"\r\n    \"password\": \"nouni@123\"\r\n}"
+				},
+				"url": {
+					"raw": "{{url}}/users/68ff378be4d170a840393596",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users",
+						"68ff378be4d170a840393596"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read Tasks",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/tasks",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Read Tasks by ID",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/tasks/",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update User by ID",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"name\" : \"Andrew Ashraf Waheed\",\r\n    \"password\" : \"Andrew@123\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/users/690088bb11cbbb3636e7637e",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users",
+						"690088bb11cbbb3636e7637e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Task by ID",
+			"request": {
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"completed\":true\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/tasks/68ff6d48aa8e8a4be0c60678",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks",
+						"68ff6d48aa8e8a4be0c60678"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete User by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/users/68ff6fb98798c28438f6bacc",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"users",
+						"68ff6fb98798c28438f6bacc"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Task by ID",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "{{url}}/tasks/68ff79f190cb3db0f9f18e38",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"tasks",
+						"68ff79f190cb3db0f9f18e38"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"auth": {
+		"type": "bearer",
+		"bearer": [
+			{
+				"key": "token",
+				"value": "{{authToken}}",
+				"type": "string"
+			}
+		]
+	},
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	]
+}

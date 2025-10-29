@@ -2,6 +2,7 @@
 
 const express = require('express')
 const User = require('../models/user')
+const auth = require('../middleware/auth')
 const router = new express.Router()
 
 
@@ -29,22 +30,52 @@ router.post('/users/login', async (req, res) => {
     try {
         const user = await User.findByCredentials(req.body.email, req.body.password)
         const token = await user.generateAuthToken()
-        res.send({ user })
+        res.status(201).send(user)
     } catch (err) {
         res.status(400).send(err.message)
     }
 })
 
-
-// Get endpoint to get all users
-router.get('/users', async (req, res) => {
-    const users = await User.find({})
+// logout endpoint for user
+router.post('/users/logout', auth, async (req, res) => {
     try {
-        res.send(users)
+        req.user.tokens = req.user.tokens.filter((token) => {
+            return token.token !== req.token
+        })
+        await req.user.save()
+        res.send({ message: 'Logged out successfully' })
     } catch (err) {
-        res.status(500).send(err)
+        res.status(500).send()
     }
 })
+
+// logout all sessions endpoint for user
+router.post('/users/logoutAll', auth, async (req, res) => {
+    try {
+        req.user.tokens = []
+        await req.user.save()
+        res.send({ message: 'Logged out from all sessions successfully' })
+    } catch (err) {
+        res.status(500).send()
+    }
+})
+
+// now Request -> Middleware (auth) -> Route Handler
+// Get endpoint to get profile of logged in user
+router.get('/users/me', auth ,async (req, res) =>{
+    // User is already authenticated and user data is attached to req.user by auth middleware
+    res.send(req.user)
+})
+
+// Get endpoint to get all users (not used anymore)
+// router.get('/users', auth ,async (req, res) => {
+//     const users = await User.find({})
+//     try {
+//         res.send(users)
+//     } catch (err) {
+//         res.status(500).send(err)
+//     }
+// })
 
 
 
