@@ -40,3 +40,4 @@ pet.toJSON = function () {
 
 console.log(JSON.stringify(pet))
 // console.log(pet) // Express calls toJSON automatically when sending response
+
