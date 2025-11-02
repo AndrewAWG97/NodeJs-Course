@@ -5,7 +5,7 @@ const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
 
 
-
+const Task = require('./task')
 
 
 const userSchema = new mongoose.Schema({
@@ -106,6 +106,15 @@ userSchema.pre('save', async function (next) {
     // if we didn't call next we will be stuck here forever
     next()
 })
+
+// Middleware to delete user tasks when user is removed
+userSchema.pre('deleteOne', { "document": true }, async function (next) {
+    const user = this
+    await Task.deleteMany({ owner: user._id })
+    console.log('User tasks deleted')
+    next()
+})
+
 
 // === MODELS ===
 // Create User model from the schema
