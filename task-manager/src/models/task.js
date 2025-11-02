@@ -16,6 +16,8 @@ const taskSchema = new mongoose.Schema({
         // ref is used to establish rela tionship between two models
         ref: 'User' // reference to the User model
     }
+}, {
+    timestamps: true
 })
 
 
