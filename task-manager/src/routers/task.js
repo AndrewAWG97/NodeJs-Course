@@ -24,20 +24,23 @@ router.post('/tasks', auth, async (req, res) => {
 })
 
 // Get endpoint to get all tasks
-router.get('/tasks', async (req, res) => {
-    const tasks = await Task.find({})
+router.get('/tasks', auth, async (req, res) => {
+    // const tasks = await Task.find({owner: req.user._id})
     try {
-        res.send(tasks)
+        await req.user.populate('tasks') // populating tasks virtual field
+        res.send(req.user.tasks)
     } catch (err) {
         res.status(500).send(err)
     }
 })
 
 // Get endpoint to get task by ID
-router.get('/tasks/:id', async (req, res) => {
+router.get('/tasks/:id', auth, async (req, res) => {
     const _id = req.params.id
-    const task = await Task.findById(_id)
     try {
+        //find task by id and owner id
+        const task = await Task.findOne({ _id, owner: req.user._id })
+
         if (!task) return res.status(404).send()
         res.send(task)
     } catch (err) {
@@ -45,7 +48,7 @@ router.get('/tasks/:id', async (req, res) => {
     }
 })
 
-router.patch('/tasks/:id', async (req, res) => {
+router.patch('/tasks/:id', auth, async (req, res) => {
     // get the fields to be updated from the request body
     const updates = Object.keys(req.body)
     //define which fields are allowed to be updated
@@ -61,7 +64,7 @@ router.patch('/tasks/:id', async (req, res) => {
     // runValidators to run schema validators on update
     // Proceed with the update
     try {
-        const task = await Task.findById(req.params.id)
+        const task = await Task.findOne({ _id: req.params.id, owner: req.user._id })
         if (!task) return res.status(404).send()
 
         updates.forEach((update) => task[update] = req.body[update])
@@ -75,9 +78,9 @@ router.patch('/tasks/:id', async (req, res) => {
 })
 
 //delete endpoint to delete task by ID
-router.delete('/tasks/:id', async (req, res) => {
+router.delete('/tasks/:id', auth, async (req, res) => {
     try {
-        const deletedTask = await Task.findByIdAndDelete(req.params.id)
+        const deletedTask = await Task.findOneAndDelete({ _id: req.params.id, owner: req.user._id })
         //if no task found send 404 and maessage no user found
         if (!deletedTask) return res.status(404).send()
         //if task found send deleted task back
