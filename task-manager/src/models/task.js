@@ -6,9 +6,15 @@ const taskSchema = new mongoose.Schema({
         required: true,
         trim: true
     },
-    completed: {
+    completed: { 
         type: Boolean,
         default: false
+    },
+    owner: {
+        type: mongoose.Schema.Types.ObjectId, // It says that this field is going to store an ObjectId
+        required: true,
+        // ref is used to establish rela tionship between two models
+        ref: 'User' // reference to the User model
     }
 })
 

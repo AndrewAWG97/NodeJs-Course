@@ -56,8 +56,15 @@ const userSchema = new mongoose.Schema({
     }]
 })
 
+userSchema.virtual('tasks', {
+    ref: 'Task',          // Look in the Task model 📦
+    localField: '_id',    // Use User._id 🔑
+    foreignField: 'owner' // Match it with Task.owner 🏷️
+})
+
+
 //method to get public profile (hide private data)
-userSchema.methods.toJSON = function () { // this method is called automatically when res.send is called
+userSchema.methods.z = function () { // this method is called automatically when res.send is called
     const user = this
     const userObject = user.toObject() // Convert Mongoose document to plain JavaScript object
     delete userObject.password
@@ -100,6 +107,8 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
+// === MODELS ===
+// Create User model from the schema
 const User = mongoose.model('User', userSchema)
 
 module.exports = User
