@@ -23,11 +23,20 @@ router.post('/tasks', auth, async (req, res) => {
     }
 })
 
-// Get endpoint to get all tasks
+// GET endpoint to get all tasks   // GET /taslks?completed=true or false
 router.get('/tasks', auth, async (req, res) => {
     // const tasks = await Task.find({owner: req.user._id})
+    const match = {}
+
+    if(req.query.completed){
+        match.completed = (req.query.completed === 'true')
+    }
+    
     try {
-        await req.user.populate('tasks') // populating tasks virtual field
+        await req.user.populate({
+            path: 'tasks',
+            match
+        })
         res.send(req.user.tasks)
     } catch (err) {
         res.status(500).send(err)
