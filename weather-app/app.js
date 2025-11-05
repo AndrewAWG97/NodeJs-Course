@@ -1,7 +1,7 @@
 const geocode = require('./Utils/geocode')
 const forecast = require('./Utils/forecast')
 
-
+require('dotenv').config()
 const address = process.argv[2]
 
 if (!address) {

@@ -16,3 +16,4 @@ task-manager/package.json
 task-manager/package-lock.json
 task-manager/package.json
 task-manager/.env
+weather-app/.env
