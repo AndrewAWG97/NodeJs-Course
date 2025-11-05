@@ -1,9 +1,11 @@
 // user.js
 
 const express = require('express')
-const User = require('../models/user')
 const auth = require('../middleware/auth')
 const multer = require('multer')
+const sharp = require('sharp')
+
+const User = require('../models/user')
 const router = new express.Router()
 
 
@@ -123,13 +125,14 @@ const upload = multer({
             return cb(new Error('File type not accepted. Please upload an image'))
         }
         return cb(undefined, true)
-
-    }
+    },
+    storage: multer.memoryStorage()
 })
 
 //POST Upload Avatar
 router.post('/user/me/avatar', auth, upload.single('avatar'), async (req, res) => {
-    req.user.avatar = req.file.buffer
+    const buffer = await sharp(req.file.buffer).resize({width: 250, height: 250}).png().toBuffer()
+    req.user.avatar = buffer
     await req.user.save()
     res.send("Avatar Saved")
 }, (err, req, res, next) => {
@@ -157,7 +160,7 @@ router.get('/user/:id/avatar', async (req, res) => {
             return res.status(404).send()
         }
         //setting a response header
-        res.set('Content-Type', 'image/jpg')
+        res.set('Content-Type', 'image/png')
         res.send(user.avatar)
     } catch (err) {
         res.status(400).send(err)
