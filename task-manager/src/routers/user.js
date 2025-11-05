@@ -86,8 +86,8 @@ router.patch('/users/me', auth, async (req, res) => {
         const updates = Object.keys(req.body)
         const allowedUpdates = ['name', 'email', 'age', 'password']
         const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
-        if(!isValidOperation){  
-            return res.status(400).send({ error: 'Invalid updates!'})
+        if (!isValidOperation) {
+            return res.status(400).send({ error: 'Invalid updates!' })
         }
         req.user[updates] = req.body[updates]
 
@@ -113,25 +113,57 @@ router.delete('/users/me', auth, async (req, res) => {
 })
 
 const upload = multer({
-    dest: 'avatars', // Directory to store uploaded files
-    limits:{
+    // dest: 'avatars', // Directory to store uploaded files
+    // When we remove the dest here, multer will send the buffer to the router 
+    limits: {
         fileSize: 1000000 // Set upload limit to 1MB
     },
-    fileFilter(req, file, cb){
-        if(!file.originalname.match(/\.(jpg|png|jpeg)$/)){
+    fileFilter(req, file, cb) {
+        if (!file.originalname.match(/\.(jpg|png|jpeg)$/)) {
             return cb(new Error('File type not accepted. Please upload an image'))
         }
         return cb(undefined, true)
-        
+
     }
 })
 
 //POST Upload Avatar
-router.post('/user/me/avatar', upload.single('avatar'),(req, res) => {
+router.post('/user/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+    req.user.avatar = req.file.buffer
+    await req.user.save()
     res.send("Avatar Saved")
 }, (err, req, res, next) => {
-    res.status(400).send({error: err.message})
+    res.status(400).send({ error: err.message })
 })
+
+// DELETE User Avatar
+router.delete('/user/me/avatar', auth, async (req, res) => {
+    try {
+        // Delete the authenticated user avatar
+        req.user.avatar = undefined
+        await req.user.save()
+        res.send("Avatar Deleted")
+    } catch (err) {
+        res.status(400).send(err)
+    }
+})
+
+// GET User Avatar
+router.get('/user/:id/avatar', async (req, res) => {
+    try {
+        const user = await User.findById(req.params.id)
+
+        if (!user || !user.avatar) {
+            return res.status(404).send()
+        }
+        //setting a response header
+        res.set('Content-Type', 'image/jpg')
+        res.send(user.avatar)
+    } catch (err) {
+        res.status(400).send(err)
+    }
+})
+
 
 
 module.exports = router
