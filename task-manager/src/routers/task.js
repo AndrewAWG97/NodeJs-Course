@@ -24,18 +24,31 @@ router.post('/tasks', auth, async (req, res) => {
 })
 
 // GET endpoint to get all tasks   // GET /taslks?completed=true or false
+// GET /tasks?limit=10&skip=0  for pagination only 10 results per page and skip 0 results
+// GET /tasks?sortBy=createdAt:desc or asc & sortBy=completed:asc or desc
 router.get('/tasks', auth, async (req, res) => {
-    // const tasks = await Task.find({owner: req.user._id})
     const match = {}
+    const sort = {}
 
-    if(req.query.completed){
-        match.completed = (req.query.completed === 'true')
+    if (req.query.completed) {
+        match.completed = req.query.completed === 'true'
     }
-    
+
+    if (req.query.sortBy) {
+        const parts = req.query.sortBy.split(':')
+        sort[parts[0]] = parts[1] === 'desc' ? -1 : 1
+    }
+
+
     try {
         await req.user.populate({
             path: 'tasks',
-            match
+            match,
+            options: {
+                limit: parseInt(req.query.limit),
+                skip: parseInt(req.query.skip),
+                sort
+            }
         })
         res.send(req.user.tasks)
     } catch (err) {

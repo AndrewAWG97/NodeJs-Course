@@ -3,6 +3,7 @@
 const express = require('express')
 const User = require('../models/user')
 const auth = require('../middleware/auth')
+const multer = require('multer')
 const router = new express.Router()
 
 
@@ -77,6 +78,8 @@ router.get('/users/me', auth, async (req, res) => {
 //     }
 // })
 
+
+
 //Refactor the update endpoint to use auth middleware
 router.patch('/users/me', auth, async (req, res) => {
     try {
@@ -97,43 +100,6 @@ router.patch('/users/me', auth, async (req, res) => {
 })
 
 
-// //Update endpoint to get user by ID
-// router.patch('/users/:id', async (req, res) => {
-//     // Get the fields to be updated from the request body
-//     const updates = Object.keys(req.body)
-//     // Define which fields are allowed to be updated
-//     const allowedUpdates = ['name', 'email', 'age', 'password']
-//     // Check if all updates are valid
-//     // every method returns true if all elements pass the test
-
-//     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
-//     if (!isValidOperation) {
-//         return res.status(400).send({ error: 'Invalid updates!' })
-//     }
-//     //new option to return the modified document rather than the original
-//     //runValidators to run schema validators on update
-//     // Proceed with the update
-//     try {
-//         // Make sure to go for middleware and validators
-//         const user = await User.findById(req.params.id)
-//         updates.forEach((update) => {
-//             user[update] = req.body[update] // Dynamically update fields
-//         })
-//         await user.save()
-
-//         if (!user) return res.status(404).send()
-//         res.send(user)
-
-//         // Alternative way (but won't run middleware and validators)
-//         // const updatedUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true, runValidators: true })
-//         // if (!updatedUser) return res.status(404).send()
-//         // res.send(updatedUser)
-//     } catch (err) {
-//         res.status(400).send(err)
-//     }
-// })
-
-
 // Delete the use with auth middleware
 router.delete('/users/me', auth, async (req, res) => {
 
@@ -146,6 +112,26 @@ router.delete('/users/me', auth, async (req, res) => {
     }
 })
 
+const upload = multer({
+    dest: 'avatars', // Directory to store uploaded files
+    limits:{
+        fileSize: 1000000 // Set upload limit to 1MB
+    },
+    fileFilter(req, file, cb){
+        if(!file.originalname.match(/\.(jpg|png|jpeg)$/)){
+            return cb(new Error('File type not accepted. Please upload an image'))
+        }
+        return cb(undefined, true)
+        
+    }
+})
+
+//POST Upload Avatar
+router.post('/user/me/avatar', upload.single('avatar'),(req, res) => {
+    res.send("Avatar Saved")
+}, (err, req, res, next) => {
+    res.status(400).send({error: err.message})
+})
 
 
 module.exports = router

@@ -84,6 +84,8 @@ userSchema.methods.generateAuthToken = async function () {
     return token
 }
 
+// static needs to be called on the model itself but methods on instances of the model
+
 // Static method to find user by credentials
 userSchema.statics.findByCredentials = async function (email, password) {
     const user = await this.findOne({ email }) // 'this' refers to the model
