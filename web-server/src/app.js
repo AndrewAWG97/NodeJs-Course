@@ -3,6 +3,8 @@ const express = require('express')    // Import Express framework
 const path = require('path')          // Import Node.js path module for handling file paths
 const hbs = require('hbs')
 
+require('dotenv').config()
+
 const geocode = require('./Utils/geocode')
 const forecast = require('./Utils/forecast')
 

@@ -9,3 +9,10 @@ web-server/package-lock.json
 .netlify
 /task-manager/node_modules
 /node_modules
+task-manager/package-lock.json
+task-manager/package.json
+task-manager/package-lock.json
+task-manager/package.json
+task-manager/package-lock.json
+task-manager/package.json
+task-manager/.env
