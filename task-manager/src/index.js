@@ -2,7 +2,9 @@
 // Basic Express server setup
 const express = require('express')
 const app = express()
-const port = process.env.PORT || 3000
+require('dotenv').config()
+
+const port = process.env.PORT
 
 // Import database connection
 require('./db/mongoose') // Ensure database connection is established
@@ -13,7 +15,6 @@ const TaskRouter = require('./routers/task')
 
 app.use(express.json())
 
-
 // Use imported routers
 app.use(UserRouter)
 app.use(TaskRouter)
@@ -22,6 +23,4 @@ app.use(TaskRouter)
 app.listen(port, () => {
     console.log(`🚀 Server is up on port ${port}`)
 })
-
-
 

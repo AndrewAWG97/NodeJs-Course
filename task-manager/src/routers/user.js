@@ -4,6 +4,8 @@ const express = require('express')
 const auth = require('../middleware/auth')
 const multer = require('multer')
 const sharp = require('sharp')
+const { sendWelcomeEmail, sendCancelEmail } = require('../emails/account')
+
 
 const User = require('../models/user')
 const router = new express.Router()
@@ -18,6 +20,8 @@ router.post('/users', async (req, res) => {
         const user = new User(req.body)
         await user.save()
         const token = await user.generateAuthToken()
+
+        sendWelcomeEmail(user.email, user.name)
         res.status(201).send({ user, token })
     } catch (err) {
         if (err.code === 11000) {
@@ -108,6 +112,7 @@ router.delete('/users/me', auth, async (req, res) => {
     try {
         // Delete the authenticated user
         await req.user.deleteOne()
+        sendCancelEmail(req.user.email,req.user.name)
         res.send(req.user)
     } catch (err) {
         res.status(400).send(err)
@@ -131,7 +136,7 @@ const upload = multer({
 
 //POST Upload Avatar
 router.post('/user/me/avatar', auth, upload.single('avatar'), async (req, res) => {
-    const buffer = await sharp(req.file.buffer).resize({width: 250, height: 250}).png().toBuffer()
+    const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
     req.user.avatar = buffer
     await req.user.save()
     res.send("Avatar Saved")
