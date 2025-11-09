@@ -1,36 +1,21 @@
 const request = require('supertest')
-const app = require('../src/app') // adjust path if needed
-const User = require('../src/models/user') // model to check DB
-const mongoose = require('mongoose')
-const jwt = require('jsonwebtoken')
-
-const userOneID = new mongoose.Types.ObjectId()
-
-const userOne = {
-    _id : userOneID,
-    name : 'Freddy',
-    email : 'freddy@example.com',
-    password : 'freddy@123',
-    tokens : [{
-        token : jwt.sign({_id: userOneID}, process.env.JWT_SECRET)
-    }]
-}
-
-beforeEach(async () => {
-    await mongoose.connect(process.env.MONGODB_URL)
-
-    await User.deleteMany()
-    await new User(userOne).save()
-})
-
-afterEach(async () => {
-    await mongoose.connection.close()
-})
+const mongoose = require('mongoose')  
+const app = require('../src/app')
+const User = require('../src/models/user')
+const { userOne, userOneID, setupDatabase } = require('./fixtures/db')
 
 jest.mock('@sendgrid/mail', () => ({
-    setApiKey: jest.fn(),
-    send: jest.fn().mockResolvedValue([])
+  setApiKey: jest.fn(),
+  send: jest.fn().mockResolvedValue([])
 }))
+
+beforeEach(setupDatabase)
+
+
+afterAll(async () => {
+  await mongoose.connection.close()
+})
+
 
 test('Should signup a new user', async () => {
     const response = await request(app)

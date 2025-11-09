@@ -5,7 +5,7 @@
   "scripts": {
     "start": "node src/index.js",
     "dev": "nodemon src/index.js",
-   "test": "cross-env NODE_ENV=test dotenv -e ./config/test.env -- jest --watch"
+   "test": "cross-env NODE_ENV=test dotenv -e ./config/test.env -- jest --watch --runInBand"
   },
   "keywords": [],
   "author": "",
