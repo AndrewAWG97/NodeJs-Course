@@ -23,7 +23,7 @@ const taskSchema = new mongoose.Schema({
 
 taskSchema.pre('save', async function (next) {
     const task = this
-    console.log('Just before saving task!')
+    // console.log('Just before saving task!')
     // if we didn't call next we will be stuck here forever
     next()
 })

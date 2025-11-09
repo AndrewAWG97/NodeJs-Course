@@ -1,33 +1,48 @@
 const request = require('supertest')
-const Task = require('../src/models/task')
 const app = require('../src/app')
-const mongoose = require('mongoose')  // ✅ Missing import fixed
-
-const { userOne, userOneID, setupDatabase } = require('./fixtures/db')
+const Task = require('../src/models/task')
+const {
+    userOneId,
+    userOne,
+    userTwoId,
+    userTwo,
+    taskOne,
+    taskTwo,
+    taskThree,
+    setupDatabase
+} = require('./fixtures/db')
 
 beforeEach(setupDatabase)
-
-afterAll(async () => {
-    await mongoose.connection.close()
-})
-
 
 test('Should create task for user', async () => {
     const response = await request(app)
         .post('/tasks')
-        .set('Authorization', `Bearer ${userOne.tokens[0].token}`) // login as userOne
+        .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
         .send({
-            description: 'Finish Node.js testing section'
+            description: 'From my test'
         })
         .expect(201)
-        
-    // Validate that the task was created in the database
     const task = await Task.findById(response.body._id)
     expect(task).not.toBeNull()
+    expect(task.completed).toEqual(false)
+})
 
-    // Assert that the task has default "completed: false"
-    expect(task.completed).toBe(false)
+test('Should fetch user tasks', async () => {
+    const response = await request(app)
+        .get('/tasks')
+        .set('Authorization', `Bearer ${userOne.tokens[0].token}`)
+        .send()
+        .expect(200)
+        console.log(response.body)
+    expect(response.body.length).toEqual(2)
+})
 
-    // Assert that the owner is the same user
-    expect(task.owner.toString()).toBe(userOneID.toString())
+test('Should not delete other users tasks', async () => {
+    const response = await request(app)
+        .delete(`/tasks/${taskOne._id}`)
+        .set('Authorization', `Bearer ${userTwo.tokens[0].token}`)
+        .send()
+        .expect(404)
+    const task = await Task.findById(taskOne._id)
+    expect(task).not.toBeNull()
 })

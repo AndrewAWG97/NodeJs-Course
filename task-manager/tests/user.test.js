@@ -21,8 +21,8 @@ test('Should signup a new user', async () => {
     const response = await request(app)
         .post('/users') // your signup endpoint
         .send({
-            name: 'Andrew Ashraf',
-            email: 'andrew@example.com',
+            name: 'Peter Ashraf',
+            email: 'peter@example.com',
             password: 'MyPass777!'
         })
         .expect(201) // Expect status 201 Created
@@ -34,8 +34,8 @@ test('Should signup a new user', async () => {
         // Assertions about the response 
         expect(response.body).toMatchObject({
             user: {
-                name: 'Andrew Ashraf',
-                email: 'andrew@example.com'
+                name: 'Peter Ashraf',
+                email: 'peter@example.com'
             },
             token: user.tokens[0].token
         })
