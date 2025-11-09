@@ -135,7 +135,7 @@ const upload = multer({
 })
 
 //POST Upload Avatar
-router.post('/user/me/avatar', auth, upload.single('avatar'), async (req, res) => {
+router.post('/users/me/avatar', auth, upload.single('avatar'), async (req, res) => {
     const buffer = await sharp(req.file.buffer).resize({ width: 250, height: 250 }).png().toBuffer()
     req.user.avatar = buffer
     await req.user.save()
@@ -145,7 +145,7 @@ router.post('/user/me/avatar', auth, upload.single('avatar'), async (req, res) =
 })
 
 // DELETE User Avatar
-router.delete('/user/me/avatar', auth, async (req, res) => {
+router.delete('/users/me/avatar', auth, async (req, res) => {
     try {
         // Delete the authenticated user avatar
         req.user.avatar = undefined
@@ -157,7 +157,7 @@ router.delete('/user/me/avatar', auth, async (req, res) => {
 })
 
 // GET User Avatar
-router.get('/user/:id/avatar', async (req, res) => {
+router.get('/users/:id/avatar', async (req, res) => {
     try {
         const user = await User.findById(req.params.id)
 
