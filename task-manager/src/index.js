@@ -2,7 +2,7 @@
 // Basic Express server setup
 const express = require('express')
 const app = express()
-require('dotenv').config()
+require('dotenv').config({ path: './config/dev.env', quiet: true })
 
 const port = process.env.PORT
 

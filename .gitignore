@@ -18,3 +18,4 @@ task-manager/package.json
 task-manager/.env
 weather-app/.env
 web-server/.env
+task-manager/config/dev.env
