@@ -16,9 +16,9 @@ socket.on('message', (msg) => {
 
 // When the form is submitted
 form.addEventListener('submit', (e) => {
-  e.preventDefault();          // prevent page reload
-  const message = input.value;
+  e.preventDefault();          // prevent page reload which default behavior
+  const message = e.target.elements.message.value;
   if (message.trim() === '') return;
   socket.emit('sendMessage', message);  // send to server
-  input.value = '';                     // clear input
+  e.target.elements.message.value = '';                     // clear input
 });
