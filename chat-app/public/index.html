@@ -1,13 +1,20 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Chat App</title>
+  <meta charset="UTF-8">
+  <title>Simple Chat</title>
 </head>
 <body>
-  <h1>Welcome to the Chat App</h1>
-  <p>Server is running successfully 🚀</p>
-  <button id="incrementButton">+1</button>
+  <h1>💬 Chat App</h1>
+
+  <ul id="messages"></ul>
+
+  <form id="messageForm">
+    <input id="messageInput" type="text" placeholder="Type a message..." autocomplete="off" />
+    <button type="submit">Send</button>
+  </form>
+
   <script src="/socket.io/socket.io.js"></script>
-  <script src="/js/chat.js"></script>
+  <script src="js/chat.js"></script>
 </body>
 </html>

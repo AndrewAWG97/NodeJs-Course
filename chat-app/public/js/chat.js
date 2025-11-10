@@ -1,13 +1,24 @@
-const socket = io();
-console.log('Chat.js loaded');
-// 1️⃣ Listen for the 'countUpdated' event coming from the server
-socket.on('countUpdated', (countFromIndex) => {
-    console.log('The count has been updated', countFromIndex);
+const socket = io();  // connect to server
+
+const form = document.querySelector('#messageForm');
+const input = document.querySelector('#messageInput');
+const messages = document.querySelector('#messages');
+
+// When we receive a message from the server
+socket.on('message', (msg) => {
+  if (msg.senderId === socket.id) {
+    console.log('🟢 You:', msg.text);
+  } else {
+    console.log(`🔵 ${msg.senderId}:`, msg.text);
+  }
 });
 
-// 2️⃣ When the button with id="increment" is clicked...
-document.querySelector('#incrementButton').addEventListener('click', () => {
-    console.log('Clicked');
-    // 3️⃣ Send an 'increment' event to the server
-    socket.emit('increment');
+
+// When the form is submitted
+form.addEventListener('submit', (e) => {
+  e.preventDefault();          // prevent page reload
+  const message = input.value;
+  if (message.trim() === '') return;
+  socket.emit('sendMessage', message);  // send to server
+  input.value = '';                     // clear input
 });

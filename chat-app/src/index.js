@@ -1,33 +1,42 @@
 const express = require('express');
-const http = require('http')
+const http = require('http');
 const path = require('path');
-const socketio = require('socket.io')
+const socketio = require('socket.io');
 
 const app = express();
-const server = http.createServer(app)
-const io = socketio(server)
+const server = http.createServer(app);     // HTTP server for Express
+const io = socketio(server);               // Attach Socket.IO to the same server
 
-const port = process.env.PORT || 3000;
-
-// Serve static files from the "public" directory
+// Serve static files from "public" folder
 app.use(express.static(path.join(__dirname, '../public')));
 
-let count = 0;
-
+// When a new client connects
 io.on('connection', (socket) => {
-    console.log("New WebSocket connection");
+    console.log('A user connected');
 
-    // 1️⃣ When a new browser connects, send it the current count
-    socket.emit('countUpdated', count);
+    // Send a welcome message to the new user
+    socket.emit('message', 'Welcome to the chat!');
 
-    // 2️⃣ Wait for the client to send an 'increment' event
-    socket.on('increment', () => {
-        console.log('Received increment event');
-        count++;
-        // socket.emit('countUpdated', count);
-        io.emit('countUpdated', count)
+    // When a user sends a message
+    socket.on('sendMessage', (msg) => {
+        // Build a message object with both text and sender ID
+        const data = {
+            text: msg,
+            senderId: socket.id
+        };
+
+        // Send it to everyone (including the sender)
+        io.emit('message', data);
+    });
+
+    // When the user disconnects
+    socket.on('disconnect', () => {
+        console.log(socket.id + 'User disconnected');
     });
 });
-server.listen(port, () => {
-    console.log(`🚀 Server is up on port ${port}`);
+
+// Start the server
+const PORT = 3000;
+server.listen(PORT, () => {
+    console.log(`🚀 Server running on port ${PORT}`);
 });
