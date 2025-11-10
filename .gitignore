@@ -19,3 +19,4 @@ task-manager/.env
 weather-app/.env
 web-server/.env
 task-manager/config/dev.env
+/chat-app/node_modules
