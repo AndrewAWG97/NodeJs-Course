@@ -1,0 +1,49 @@
+body {
+  font-family: sans-serif;
+  margin: 20px;
+  background-color: #f7f7f7;
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+}
+
+#messages {
+  list-style: none;
+  padding: 0;
+  border: 1px solid #ccc;
+  height: 400px;
+  overflow-y: auto;
+  background: #fff;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+.message {
+  margin: 8px;
+  padding: 8px 12px;
+  border-radius: 10px;
+  background: #e9f5ff;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+.time {
+  color: #777;
+  font-size: 0.8em;
+}
+
+button {
+  margin-top: 5px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  background-color: #007bff;
+  color: white;
+}
+
+button:disabled {
+  background-color: #999;
+  cursor: not-allowed;
+}
