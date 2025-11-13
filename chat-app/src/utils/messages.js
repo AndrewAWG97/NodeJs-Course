@@ -1,17 +1,19 @@
 // Utility functions for generating message objects
 
 // For normal text messages
-export function generateMessage(text) {
-  return {
-    text,
-    createdAt: new Date().getTime(),
-  };
+export const generateMessage = (username, text) => {
+    return {
+        username,
+        text,
+        createdAt: new Date().getTime()
+    }
 }
-
 // For location messages
-export function generateLocationMessage(url) {
-  return {
-    url, 
-    createdAt: new Date().getTime(),
-  };
+
+export const generateLocationMessage = (username, url) => {
+    return {
+        username,
+        url,
+        createdAt: new Date().getTime()
+    }
 }
