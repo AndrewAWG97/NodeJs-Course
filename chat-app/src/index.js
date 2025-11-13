@@ -1,24 +1,15 @@
-// ==========================================
-// 🌐 SIMPLE CHAT SERVER WITH LOCATION SHARING
-// ==========================================
-
 import express from 'express';
 import http from 'http';
-import path from 'path';
 import { Server } from 'socket.io';
-import leoProfanity from 'leo-profanity';
+import path from 'path';
 import { fileURLToPath } from 'url';
 import { dirname } from 'path';
+import leoProfanity from 'leo-profanity';
+import { generateMessage, generateLocationMessage } from './utils/messages.js';
 
-// ------------------------------------------
-// 🔧 ESM setup (__dirname replacement)
-// ------------------------------------------
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// ------------------------------------------
-// 🧩 Server Setup
-// ------------------------------------------
 const app = express();
 const server = http.createServer(app);
 const io = new Server(server);
@@ -28,71 +19,38 @@ app.use(express.static(path.join(__dirname, '../public')));
 // Load English profanity dictionary
 leoProfanity.loadDictionary();
 
-// ------------------------------------------
-// 💬 Socket.IO Logic
-// ------------------------------------------
 io.on('connection', (socket) => {
-  console.log(`✅ User connected: ${socket.id}`);
+  console.log('✅ New connection');
 
-  // Send welcome message
-  socket.emit('message', {
-    text: 'Welcome to the chat!',
-    senderId: 'Server',
-    createdAt: new Date().toISOString(),
-  });
+  // Welcome user
+  socket.emit('message', generateMessage('Welcome to the chat!'));
 
   // Notify others
-  socket.broadcast.emit('message', {
-    text: 'A new user joined the chat!',
-    senderId: 'Server',
-    createdAt: new Date().toISOString(),
+  socket.broadcast.emit('message', generateMessage('A new user joined.'));
+
+  // Handle normal messages
+  socket.on('sendMessage', (message, callback) => {
+    const cleaned = leoProfanity.clean(message);
+    io.emit('message', generateMessage(cleaned));
+
+    callback(
+      leoProfanity.check(message)
+        ? '⚠️ Message cleaned for profanity.'
+        : '✅ Message delivered.'
+    );
   });
 
-  // ---- Handle text messages ----
-  socket.on('sendMessage', (messageText, callback) => {
-    const cleanedText = leoProfanity.clean(messageText);
-
-    io.emit('message', {
-      text: cleanedText,
-      senderId: socket.id,
-      createdAt: new Date().toISOString(),
-    });
-
-    if (leoProfanity.check(messageText)) {
-      callback('⚠️ Your message contained profanity and was auto-cleaned.');
-    } else {
-      callback('✅ Message delivered successfully!');
-    }
+  // Handle location sharing
+  socket.on('sendLocation', (coords, callback) => {
+    const locationUrl = `https://www.google.com/maps?q=${coords.latitude},${coords.longitude}`;
+    io.emit('locationMessage', generateLocationMessage(locationUrl));
+    callback('✅ Location shared!');
   });
 
-  // ---- Handle location sharing ----
-  socket.on('sendLocation', ({ latitude, longitude }, callback) => {
-    const locationUrl = `https://www.google.com/maps/search/${latitude},${longitude}`;
-
-    io.emit('message', {
-      text: `📍 Shared location: ${locationUrl}`,
-      senderId: socket.id,
-      createdAt: new Date().toISOString(),
-    });
-
-    callback('✅ Location shared successfully!');
-  });
-
-  // ---- Handle disconnect ----
   socket.on('disconnect', () => {
-    console.log(`❌ User disconnected: ${socket.id}`);
-    io.emit('message', {
-      text: 'A user has left the chat.',
-      senderId: 'Server',
-      createdAt: new Date().toISOString(),
-    });
+    io.emit('message', generateMessage('A user has left.'));
   });
 });
 
-// ------------------------------------------
-// 🚀 Start Server
-// ------------------------------------------
 const PORT = 3000;
-server.listen(PORT, () => {
-  console.log(`🚀 Server running on http://localhost:${PORT}`);
-});
+server.listen(PORT, () => console.log(`🚀 Server running on http://localhost:${PORT}`));

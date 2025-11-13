@@ -1,89 +1,68 @@
-// ============================================
-// 💬 Chat Client Script
-// ============================================
+const socket = io()
 
-// Connect to backend server
-const socket = io();
+// Elements
+const $messageForm = document.querySelector('#message-form')
+const $messageFormInput = $messageForm.querySelector('input')
+const $messageFormButton = $messageForm.querySelector('button')
+const $sendLocationButton = document.querySelector('#send-location')
+const $messages = document.querySelector('#messages')
 
-// DOM elements
-const form = document.querySelector('#message-form');
-const input = form.querySelector('input');
-const sendButton = form.querySelector('button');
-const statusElement = document.querySelector('#status');
-const messages = document.querySelector('#messages');
-const sendLocation = document.querySelector('#send-location');
-const locationStatus = document.querySelector('#location-status');
+// Templates
+const messageTemplate = document.querySelector('#message-template').innerHTML
+const locationMessageTemplate = document.querySelector('#location-message-template').innerHTML
 
-// Mustache template for messages
-const messageTemplate = document.querySelector('#message-template').innerHTML;
-
-// ============================================
-// 📩 Receive and Render Messages
-// ============================================
 socket.on('message', (message) => {
-  let username = 'Unknown';
-  if (message.senderId === 'Server') username = 'Server';
-  else if (message.senderId) username = `User ${message.senderId.slice(0, 5)}`;
+    console.log(message)
+    const html = Mustache.render(messageTemplate, {
+        message: message.text,
+        createdAt: moment(message.createdAt).format('h:mm a')
+    })
+    $messages.insertAdjacentHTML('beforeend', html)
+})
 
-  const time = moment(message.createdAt).format('h:mm a');
+socket.on('locationMessage', (message) => {
+    console.log(message)
+    const html = Mustache.render(locationMessageTemplate, {
+        url: message.url,
+        createdAt: moment(message.createdAt).format('h:mm a')
+    })
+    $messages.insertAdjacentHTML('beforeend', html)
+})
 
-  const html = Mustache.render(messageTemplate, {
-    username,
-    text: message.text,
-    createdAt: time,
-  });
+$messageForm.addEventListener('submit', (e) => {
+    e.preventDefault()
 
-  messages.insertAdjacentHTML('beforeend', html);
-  messages.scrollTop = messages.scrollHeight;
-});
+    $messageFormButton.setAttribute('disabled', 'disabled')
 
-// ============================================
-// 📨 Send Message
-// ============================================
-form.addEventListener('submit', (e) => {
-  e.preventDefault();
+    const message = e.target.elements.message.value
 
-  const message = input.value.trim();
-  if (!message) return;
+    socket.emit('sendMessage', message, (error) => {
+        $messageFormButton.removeAttribute('disabled')
+        $messageFormInput.value = ''
+        $messageFormInput.focus()
 
-  sendButton.disabled = true;
-  sendButton.textContent = 'Sending...';
+        if (error) {
+            return console.log(error)
+        }
 
-  socket.emit('sendMessage', message, (ackMessage) => {
-    sendButton.disabled = false;
-    sendButton.textContent = 'Send';
-    input.value = '';
-    input.focus();
+        console.log('Message delivered!')
+    })
+})
 
-    statusElement.textContent = ackMessage;
-    statusElement.style.color = ackMessage.includes('⚠️') ? 'orange' : 'green';
-    setTimeout(() => (statusElement.textContent = ''), 2500);
-  });
-});
+$sendLocationButton.addEventListener('click', () => {
+    if (!navigator.geolocation) {
+        return alert('Geolocation is not supported by your browser.')
+    }
 
-// ============================================
-// 📍 Send Location
-// ============================================
-sendLocation.addEventListener('click', () => {
-  if (!navigator.geolocation) {
-    return alert('Geolocation is not supported by your browser.');
-  }
+    $sendLocationButton.setAttribute('disabled', 'disabled')
 
-  sendLocation.disabled = true;
-  sendLocation.textContent = 'Sending location...';
-
-  navigator.geolocation.getCurrentPosition((position) => {
-    const coords = {
-      latitude: position.coords.latitude,
-      longitude: position.coords.longitude,
-    };
-
-    socket.emit('sendLocation', coords, (ackMessage) => {
-      sendLocation.disabled = false;
-      sendLocation.textContent = 'Send Location';
-      locationStatus.textContent = ackMessage;
-      locationStatus.style.color = 'green';
-      setTimeout(() => (locationStatus.textContent = ''), 2500);
-    });
-  });
-});
+    navigator.geolocation.getCurrentPosition((position) => {
+        socket.emit('sendLocation', {
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude
+        }, () => {
+            $sendLocationButton.removeAttribute('disabled')
+            console.log('Location shared!')  
+        })
+    })
+})
